@@ -10,7 +10,10 @@ The processor board is an ESP8266 from Amica. The Arduino interface is happy tal
 * Upload Speed: "115200"
 * Flash Size: "4MB"
 
-I am using version 3.0.2 of `esp8266` to support this board. This library is considerable down-rev.
+I am using version 3.0.2 of `esp8266` to support this board. This library is considerable down-rev, but the board involved is ancient 
+so it is probably fine.
+
+I use port `/dev/cu.SLAB_USBtoUART` on my Mac. Your mileage will vary, of course.
 
 ![image](https://user-images.githubusercontent.com/250490/214145581-dc9f662e-250f-4bd1-9050-0e51f0ca7057.png)
 
