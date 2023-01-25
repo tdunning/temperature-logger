@@ -30,7 +30,7 @@ void setup() {
   for (int sensor = 0; sensor < 4; sensor++) {
     history[sensor] = new float[HIST_SIZE];
     for (int t = 0; t < HIST_SIZE; t++) {
-      history[sensor][t] = -1000.0;
+      history[sensor][t] = -127.0;
     }
   }
   u8g2.begin();
@@ -58,18 +58,20 @@ void loop() {
 }
 
 /**
- * Writes an array of temperatures to the display
- */
+   Writes an array of temperatures to the display
+*/
 void updateOLED(float* tx) {
   char buf[10];
   u8g2.firstPage();
   do {
     u8g2.setFont(u8g2_font_fub20_tr);
     for (int row = 0; row < 4; row++) {
-      snprintf(buf, 10, "%.1f", tx[row]);
-      int x = (row % 2) * 64;
-      int y = ((row / 2) + 1) * 27;
-      u8g2.drawStr(x, y, buf);
+      if (tx[row] > -100) {
+        snprintf(buf, 10, "%.1f", tx[row]);
+        int x = (row % 2) * 64;
+        int y = ((row / 2) + 1) * 27;
+        u8g2.drawStr(x, y, buf);
+      }
     }
   } while ( u8g2.nextPage() );
 }
@@ -79,8 +81,8 @@ void updateOLED(float* tx) {
 static uint8_t* bits = new uint8_t[HIST_SIZE / 8 * 32];
 
 /**
- * Draw recent temperatures as four sparklines
- */
+   Draw recent temperatures as four sparklines
+*/
 void updateSpark(float* tx) {
   u8g2.firstPage();
 
@@ -95,8 +97,8 @@ void updateSpark(float* tx) {
       // shift old data
       float z = history[sensor][t + 1];
       history[sensor][t] = z;
-      // -1000 is the marker for missing data
-      if (z != -1000.0) {
+      // -100 or less is the marker for missing data
+      if (z > -100.0) {
         // accumulate summaries
         n++;
         if (z < minT) {
@@ -137,7 +139,7 @@ void updateSpark(float* tx) {
         draw(t, minT, maxT, mean, minT, 1);
         draw(t, minT, maxT, mean, maxT, 1);
       }
-      if (history[sensor][t] == -1000.0) {
+      if (history[sensor][t] <= -100.0) {
         continue;
       }
       // draw the actual data with a wide line
@@ -152,16 +154,16 @@ void updateSpark(float* tx) {
 }
 
 /**
- * Converts a single value into marks in the bitmap
- * after scaling for the data range and the display
- * details
- */
+   Converts a single value into marks in the bitmap
+   after scaling for the data range and the display
+   details
+*/
 void draw(int t, float minT, float maxT, float mean, float val, int dy) {
   int ix = t / 8;
   int mask = 1 << (t % 8);
   int y = floor(25.0 * (1.0 - (val - minT) / (maxT - minT)));
-  int down = dy/2;
-  int up = (dy + 1)/2;
+  int down = dy / 2;
+  int up = (dy + 1) / 2;
   for (int w = -down; w < up; w++) {
     int iy = max(0, y + w) * HIST_SIZE / 8;
     bits[ix + iy] |= mask;
