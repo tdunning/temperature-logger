@@ -1,6 +1,12 @@
 # Temperature Logger
 A simple wireless data logger that can read four temperature sensors
 
+# The Printed Circuit Board
+
+See the PCB sub-directory for the design files for the printed circuit board that hosts the ESP8266 and display.
+
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/250490/220561334-8e5fdb78-9a88-4d40-a1d9-3df2e74d7b59.png">
+
 # Libraries and Board
 
 This sketch uses the OneWire (2.3.7), DallasTemperature (3.9.0), and U8g2 (2.33.15) libraries available in the Arduino interface.
